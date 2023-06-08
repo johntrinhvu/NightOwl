@@ -1,0 +1,56 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>User Profile Page</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/profile.css' %}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="overlay"></div>
+    <video id="video-background" data-videos='{% static "profilevideo/party.mp4" %}, {% static "profilevideo/party2.mp4" %}, {% static "profilevideo/party3.mp4" %}' autoplay loop muted></video>
+    <div id="video-overlay"></div>
+
+    <div class="profile-container">
+        <div class="profile-picture">
+            <img src="{% static 'img/profile.jpg' %}" alt="Profile picture">
+        </div>
+        <div class="profile-details">
+            <h2>username : {{ user.username }}</h2>
+            <h4>email : {{ user.email }}</h4>
+            <p>Joined on: {{ user.date_joined }}</p>
+        </div>
+    </div>
+
+    <script src="{% static 'js/profile.js' %}"></script>
+
+    <script>
+        window.addEventListener('DOMContentLoaded', function () {
+            var videoElement = document.getElementById('video-background');
+            var videoIndex = 0;
+            var videos = videoElement.dataset.videos.split(', ');
+
+            function loadNextVideo() {
+                videoElement.src = videos[videoIndex].trim();
+                videoElement.load();
+                videoElement.playbackRate = 0.8;
+                videoElement.play();
+                videoIndex = (videoIndex + 1) % videos.length;
+
+                setTimeout(loadNextVideo, 5000);
+            }
+
+            videoElement.addEventListener('timeupdate', function() {
+                if (this.currentTime >= this.duration - 0.5) {
+                    loadNextVideo();
+                }
+            });
+
+            loadNextVideo();
+        });
+    </script>
+</body>
+</html>

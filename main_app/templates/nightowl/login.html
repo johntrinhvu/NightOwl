@@ -1,0 +1,133 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login Page</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/login.css' %}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+    <style>
+        
+        .form-container {
+            background-color: rgba(0, 0, 0, 0.3);
+            color: #fff;
+            padding: 40px; /* Increased padding */
+            border-radius: 10px;
+            max-width: 600px; /* Increased max-width */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+            box-sizing: border-box; /* Added */
+        }
+
+        #video-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5); /* Adjust the opacity and color here */
+            z-index: -1;
+        }
+    </style>
+</head>
+<body>
+    <div class="overlay"></div>
+    
+    <video id="video-background" data-videos='{% static "loginvideo/party.mp4" %}, {% static "loginvideo/party2.mp4" %}, {% static "loginvideo/party3.mp4" %}' autoplay loop muted></video>
+    <div id="video-overlay"></div>
+
+
+<!-- LOGIN -->
+<div class="form-container" id="login-form">
+    <h1>NightOwl</h1>
+    <form method="POST" action="{% url 'login' %}">
+        {% csrf_token %}
+        <input type="text" id="username" name="username" placeholder="Username">
+        <input type="password" id="password" name="password" placeholder="Password">
+        <button type="submit">Login</button>
+    </form>
+    <p>Don't have an account? <a href="#" id="register-link">Register</a></p>
+</div>
+
+<!-- REGISTRATION -->
+<div class="form-container" id="register-form" style="display:none">
+    <h1>NightOwl</h1>
+    <form method="POST" action="{% url 'signup' %}">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" onclick="return validatePasswords();">Register</button>
+    </form>
+    <p>Already have an account? <a href="#" id="login-link">Login</a></p>
+    {% if error_message %}
+        <p>{{ error_message }}</p>
+    {% endif %}
+</div>
+
+
+    <script src="{% static 'js/loginregister.js' %}"></script>
+
+    <script>
+        window.addEventListener('DOMContentLoaded', function () {
+            var videoElement = document.getElementById('video-background');
+            var videoIndex = 0;
+            var videos = videoElement.dataset.videos.split(', ');
+
+            function loadNextVideo() {
+                videoElement.src = videos[videoIndex].trim();
+                videoElement.load();
+                videoElement.playbackRate = 0.8; // Play video at half speed
+                videoElement.play();
+                videoIndex = (videoIndex + 1) % videos.length;
+
+                // Set a timer to load the next video after 5 seconds
+                setTimeout(loadNextVideo, 5000);
+            }
+
+            videoElement.addEventListener('timeupdate', function() {
+                if (this.currentTime >= this.duration - 0.5) {
+                    loadNextVideo();
+                }
+            });
+
+            loadNextVideo();
+        });
+        window.addEventListener('DOMContentLoaded', function () {
+    // Get elements
+    var loginForm = document.getElementById('login-form');
+    var registerForm = document.getElementById('register-form');
+    var registerLink = document.getElementById('register-link');
+    var loginLink = document.getElementById('login-link');
+
+    // Set up click event for Register link
+    registerLink.addEventListener('click', function(e) {
+        e.preventDefault();
+        loginForm.style.visibility = 'hidden';
+        registerForm.style.visibility = 'visible';
+    });
+
+    // Set up click event for Login link
+    loginLink.addEventListener('click', function(e) {
+        e.preventDefault();
+        loginForm.style.visibility = 'visible';
+        registerForm.style.visibility = 'hidden';
+    });
+});
+function validatePasswords() {
+        var password = document.getElementById("new_password").value;
+        var confirmPassword = document.getElementById("new_password_confirm").value;
+
+        if (password !== confirmPassword) {
+            alert("Passwords do not match");
+            return false;
+        }
+
+        return true;
+    }
+
+    </script>
+</body>
+</html>
