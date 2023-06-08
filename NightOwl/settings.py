@@ -80,8 +80,6 @@ WSGI_APPLICATION = 'NightOwl.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-SECRET_KEY = os.environ.get('SECRET_KEY')
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
