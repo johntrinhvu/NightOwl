@@ -31,7 +31,7 @@
 <body>
   <div class="overlay"></div>
   <div id="video-overlay">
-    <video id="video-background" data-videos='{% static "formdetailsvideo/video1.mp4" %}, {% static "formdetailsvideo/video3.mp4" %}' autoplay loop muted></video>
+    <video id="video-background" data-videos='{% static "detailsvideo/video1.mp4" %}, {% static "detailsvideo/video2.mp4" %}, {% static "detailsvideo/video3.mp4" %}' autoplay loop muted></video>
   </div>
   <div class="card">
     <h1 class="card-title uppercase">{{ event.name }}</h1> <!-- Put the title inside the card div -->
@@ -47,7 +47,6 @@
     <div class="card-action">
       <a href="{% url 'events_update' event.id %}">Edit</a>
       <a href="{% url 'events_delete' event.id %}">Delete</a>
-    </div>
   </div>
 <script>
    window.addEventListener('DOMContentLoaded', function () {
