@@ -1,5 +1,6 @@
 import os
 import uuid
+from django.http import JsonResponse
 import boto3
 from django.shortcuts import render, redirect
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
@@ -11,33 +12,87 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse
 from .models import Event, Photo
 from django import forms
+from django.contrib.auth.forms import AuthenticationForm
 
+
+
+from django.shortcuts import redirect
+def events_all(request):
+    events = Event.objects.all().order_by('-event_date_time')
+    return render(request, 'home.html', {'events': events})
+
+def login_redirect(request):
+    return redirect('path/to/your/styled/login.html')
 
 class EventForm(forms.ModelForm):
     class Meta:
         model = Event
-        fields = ['name', 'type', 'description', 'location', 'event_date_time', 'capacity', 'restrictions', 'notes']
+        fields = ['name', 'type', 'description', 'location', 'event_date_time', 'capacity', 'restrictions', 'notes', 'zipcode']
         widgets = {
             'event_date_time': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
         }
 
+from django.contrib.auth.mixins import UserPassesTestMixin
+
 class EventCreate(LoginRequiredMixin, CreateView):
     model = Event
     form_class = EventForm
-    # fields = ['name', 'type', 'description', 'location', 'date', 'time', 'capacity', 'restrictions', 'notes']  # Remove this line
 
     def form_valid(self, form):
         form.instance.user = self.request.user
         return super().form_valid(form)
 
-class EventUpdate(UpdateView):
+
+class EventUpdate(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Event
     form_class = EventForm
-    # fields = ['name', 'type', 'description', 'location', 'date', 'time', 'capacity', 'restrictions', 'notes']  # Remove this line
 
-class EventDelete(LoginRequiredMixin, DeleteView):
-  model = Event
-  success_url = '/'
+    def get_queryset(self):
+        """Only let the user update their own events unless they are an admin."""
+        qs = super().get_queryset()
+        if self.request.user.is_superuser:
+            return qs
+        else:
+            return qs.filter(user=self.request.user)
+
+    def test_func(self):
+        """Only allow the event owner or an admin to update the event."""
+        obj = self.get_object()
+        return obj.user == self.request.user or self.request.user.is_superuser
+
+class EventDelete(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    model = Event
+    success_url = '/'
+
+    def get_queryset(self):
+        """Only let the user delete their own events unless they are an admin."""
+        qs = super().get_queryset()
+        if self.request.user.is_superuser:
+            return qs
+        else:
+            return qs.filter(user=self.request.user)
+
+    def test_func(self):
+        """Only allow the event owner or an admin to delete the event."""
+        obj = self.get_object()
+        return obj.user == self.request.user or self.request.user.is_superuser
+
+
+from django.views.decorators.csrf import csrf_exempt
+
+from django.http import JsonResponse
+
+@csrf_exempt
+def delete_event(request, event_id):
+    event = Event.objects.get(id=event_id)
+    
+    if request.method == 'POST':
+        event.delete()
+        return JsonResponse({'redirect': '/'})
+    
+    return JsonResponse({'error': 'Invalid request'})
+
+
 
 def events_detail(request, event_id):
     event = Event.objects.get(id=event_id)
@@ -51,20 +106,28 @@ def index(request):
 #         'events': events
 #     })
 
+def events_by_type(request, type):
+    events = Event.objects.filter(type=type)
+    return render(request, 'home.html', {'events': events})
+
+
 def login_view(request):
     error_message = ''
     if request.method == 'POST':
-        username = request.POST['username']
-        password = request.POST['password']
-        user = authenticate(request, username=username, password=password)
-
-        if user is not None:
-            login(request, user)
-            return redirect('home.html')
+        form = AuthenticationForm(request, data=request.POST)
+        if form.is_valid():
+            username = form.cleaned_data.get('username')
+            password = form.cleaned_data.get('password')
+            user = authenticate(request, username=username, password=password)
+            if user is not None:
+                login(request, user)
+                return redirect('home')  # Replace 'home' with the actual URL name or path of your home page
         else:
             error_message = 'Invalid username or password'
-
-    return redirect('signup')
+    else:
+        form = AuthenticationForm()
+    context = {'form': form, 'error_message': error_message}
+    return render(request, 'nightowl/login.html', context)
 
 @login_required
 def add_photo(request, event_id):
@@ -101,6 +164,8 @@ def signup(request):
 def logout_view(request):
     logout(request)
     return redirect('signup')
+
+
 
 @login_required
 def profile(request):

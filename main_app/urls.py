@@ -13,4 +13,11 @@ urlpatterns = [
     path('login/', views.login_view, name='login'),
     path('profile/', views.profile, name='profile'),
     path('logout/', views.logout_view, name='logout'),
+    path('login_redirect/', views.login_redirect, name='login_redirect'),
+    path('events/type/<str:type>', views.events_by_type, name='events_by_type'),
+    path('events/all', views.events_all, name='events_all'),
+    path('event/<int:event_id>/delete/', views.delete_event, name='event_delete'),
+    
+    
+
 ]
