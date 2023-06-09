@@ -13,10 +13,11 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 from pathlib import Path
 from dotenv import load_dotenv
 import os
-
+import environ
 
 load_dotenv()
-
+environ.Env()
+environ.Env.read_env()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -79,8 +80,6 @@ WSGI_APPLICATION = 'NightOwl.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
-
-SECRET_KEY = os.environ.get('SECRET_KEY')
 
 DATABASES = {
     'default': {
