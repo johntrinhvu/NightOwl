@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+  <p>Please wait while we redirect you to the styled login page...</p>
+  <script>
+    window.location.href = "{% url 'login_redirect' %}";
+  </script>
+{% endblock %}

@@ -23,7 +23,7 @@
       <h1 style="font-weight: 800">NightOwl</h1>
     </div>
 
-    <div class="header-center">
+    <div class="header-center" style="display: none;">
       <input
         type="text"
         placeholder="Enter Zip Code"
@@ -31,6 +31,18 @@
         name="zipcode"
       />
     </div>
+    
+    </div>
+    <div class="search">
+      <input
+        type="text"
+        placeholder="Search Parties"
+        id="search"
+        name="search"
+      /> <style></style>
+    </div>
+    
+    
 
     <div class="header-right">
       <button class="btn btn-primary">
@@ -48,58 +60,55 @@
   <nav>
     <ul>
       <li>
-        <a href="#"
+        <a href="{% url 'events_all' %}">
+          <i class="fas fa-reply-all" style="font-size: 150%"></i>
+          <p style="margin-top: 5px">All Events</p>
+        </a>
+      </li>
+      <li>
+        <a href="{% url 'events_by_type' 'Party' %}"
           ><i class="fas fa-face-laugh-wink" style="font-size: 150%"></i>
           <p style="margin-top: 5px">Party</p></a
         >
       </li>
       <li>
-        <a href="#"
+        <a href="{% url 'events_by_type' 'Game' %}"
           ><i class="fas fa-dice" style="font-size: 150%"></i>
           <p style="margin-top: 5px">Game</p></a
         >
       </li>
       <li>
-        <a href="#"
+        <a href="{% url 'events_by_type' 'Club' %}"
           ><i class="fas fa-glass-cheers" style="font-size: 150%"></i>
           <p style="margin-top: 5px">Club</p></a
         >
       </li>
       <li>
-        <a href="#"
+        <a href="{% url 'events_by_type' 'House Party' %}"
           ><i class="fas fa-home" style="font-size: 150%"></i>
           <p style="margin-top: 5px">House Party</p></a
         >
       </li>
       <li>
-        <a href="#"
+        <a href="{% url 'events_by_type' 'Bar' %}"
           ><i class="fas fa-beer" style="font-size: 150%"></i>
           <p style="margin-top: 5px">Bar</p></a
         >
       </li>
     </ul>
+    
   </nav>
 
   <main>
-    <div class="search">
-      <input
-        type="text"
-        placeholder="Search Parties"
-        id="search"
-        name="search"
-      />
-    </div>
+    
+    
 
     <div class="card-container">
       <div id="myModal" class="modal">
-        <div id="modal-content">
           <span class="close">&times;</span>
           <h1>Event Details</h1>
-          <div class="card">
-            <div id="modal-content"></div>
+            <div id="modal-content"></div>  
             <div class="card-action"></div>
-          </div>
-        </div>
       </div>
       
       <!--   Display content on card     -->
@@ -109,10 +118,11 @@
             <i class="far fa-heart" style="font-size: 150%;"></i> <!-- Empty heart icon -->
           </div>
           <div class="card-body">
-            <h1>{{ event.name }}</h1>
-            <h2>{{ event.location }}</h2>
-            <h3>{{ event.event_date_time|date:"F d, Y" }}</h3>
-            <h3>{{ event.event_date_time|date:"g:i A" }}</h3>
+            <h1> {{ event.name }}</h1>
+            <h2>Location: {{ event.location }}</h2>
+            <h2>Zip Code: {{ event.zipcode }}</h2>
+            <h3>Date: {{ event.event_date_time|date:"F d, Y" }}</h3>
+            <h3>Time: {{ event.event_date_time|date:"g:i A" }}</h3>
             <h3>{{ event.capacity }}</h3>
             <!-- event data -->
           </div>
@@ -127,18 +137,47 @@
     var modal = document.getElementById("myModal");
     // Get the <span> element that closes the modal
     var span = document.getElementsByClassName("close")[0];
+    var currentUser = "{{ user.username }}";
+    document.getElementById("zipcode").addEventListener("keyup", function(event) {
+  if (event.key === "Enter") {
+    filterEventsByZipcode(this.value);
+  }
+});
+
+function filterEventsByZipcode(zipcode) {
+  var cards = document.getElementsByClassName("card");
+
+  for (var i = 0; i < cards.length; i++) {
+    var card = cards[i];
+    var eventZipcode = card.querySelector(".card-body .zipcode").innerText;
+
+    if (eventZipcode.includes(zipcode)) {
+      card.style.display = "block";
+    } else {
+      card.style.display = "none";
+    }
+  }
+}
+
+
+
+
+
+
+
 
     // When the user clicks on the button, open the modal
     function handleClick(e) {
-      const id = e.currentTarget.id
+      const id = e.currentTarget.id;
       modal.style.display = "block";
       var events = [
       {% for event in events %} {
         "name": "{{ event.name }}",
-        "user": "{{ event.user }}",
+        "user": "{{ event.user.username }}",  // Assuming event.user is a User object, if not adjust accordingly.
         "type": "{{ event.type }}",
         "description": "{{ event.description }}",
         "location": "{{ event.location }}",
+        "zipcode": "{{ event.zipcode }}",
         "date_time": "{{ event.event_date_time }}",
         "capacity": "{{ event.capacity }}",
         "restrictions": "{{ event.restrictions }}",
@@ -147,57 +186,88 @@
         "update": "{% url 'events_update' event.id %}",
         "delete": "{% url 'events_delete' event.id %}",
         "photo": "{% url 'add_photo' event.id %}"
-      },
+      }{% if not forloop.last %},{% endif %}
       {% endfor %} 
       ];
 
-      let post = events[id-1]
-      myModal.innerHTML=`
-              <div class="modal-content">
-                <span class="close">&times;</span>
-                <h1>Event Details</h1>
-                  <div class="card">
-                    <div class="modal-content">
-                      <span class="card-title">${post.name}</span>
-                      <p>User: ${post.user}</p>
-                      <p>Type: ${post.type}</p>
-                      <p>Description: ${post.description}</p>
-                      <p>Location: ${post.location}</p>
-                      <p>Date: ${post.date_time}</p>
-                      <p>Capacity: ${post.capacity}</p>
-                      <P>Restrictions: ${post.restrictions}</P>
-                      <p>Notes: ${post.notes}</p>
-                    </div>
-                    <div class="card-action">
-                      <a href="${post.update}">Edit</a>
-                      <a href="${post.delete}">Delete</a>
-                    </div>
-                  </div>
-                <!--    Photo on card     -->
-                <img class="responsive-img card-panel" src="${post.photo_url}">
-                <form action="${post.photo}" enctype="multipart/form-data" method="POST" class="card-panel">
-                  {% csrf_token %}
-                  <input type="file" name="photo-file">
-                  <!-- if you need to style the above you'll need client side JS -->
-                  <br><br>
-                  <button type="submit" class="btn">Details</button>
-                </form>
-              </div>
-      `
+      let post = events[id-1];
+      var cardActionContent = '';
+      if (currentUser == post.user || currentUser == 'admin') {
+          cardActionContent = `<a href="${post.update}">Edit</a>
+                              <a href="${post.delete}">Delete</a>`;
+      }
+
+      myModal.innerHTML = `
+  <div class="modal-content">
+    <span class="close">&times;</span>
+    <h1>Event Details</h1>
+    <div>
+      <span class="card-title">${post.name}</span>
+      <p>Host: ${post.user}</p>
+      <p>Event Type: ${post.type}</p>
+      <p>Description: ${post.description}</p>
+      <p>Location: ${post.location}</p>
+      <p>Zip Code: ${post.zipcode}</p>
+      <p>Date: ${post.date_time}</p>
+      <p>Capacity: ${post.capacity}</p>
+      <P>Restrictions: ${post.restrictions}</P>
+      <p>HostNotes: ${post.notes}</p>
+    </div>
+    <div class="card-action">
+      ${cardActionContent}
+    </div>
+    <!-- Photo on card -->
+    <img class="responsive-img card-panel" src="${post.photo_url}">
+    <form action="${post.photo}" enctype="multipart/form-data" method="POST" class="card-panel">
+      {% csrf_token %}
+      <input type="file" name="photo-file">
+      <!-- If you need to style the above, you'll need client-side JS -->
+      <br><br>
+      <button type="submit" class="btn">More Details</button>
+    </form>
+  </div>
+`;
+
     }
 
     // When the user clicks on <span> (x), close the modal
     span.onclick = function() {
       modal.style.display = "none";
-
     }
     // When the user clicks anywhere outside of the modal, close it
     window.onclick = function(event) {
       if (event.target == modal) {
         modal.style.display = "none";
-
       }
     }
-  </script>
+    document.getElementById("search").addEventListener("keyup", function(event) {
+  if (event.key === "Enter") {
+    filterEventsByKeyword(this.value);
+  }
+});
+
+function filterEventsByKeyword(keyword) {
+  var cards = document.getElementsByClassName("card");
+
+  for (var i = 0; i < cards.length; i++) {
+    var card = cards[i];
+    var eventDetails = card.querySelector(".card-body").innerText;
+
+    if (eventDetails.toLowerCase().includes(keyword.toLowerCase())) {
+      card.style.display = "block";
+    } else {
+      card.style.display = "none";
+    }
+  }
+}
+document.getElementById("zipcode").addEventListener("keyup", function(event) {
+  if (event.key === "Enter") {
+    filterEventsByZipcode(this.value);
+  }
+});
+
+
+</script>
+
 </body>
 </html>

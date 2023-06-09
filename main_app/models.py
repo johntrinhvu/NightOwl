@@ -1,27 +1,43 @@
 from django.db import models
 from django.urls import reverse
 from django.utils import timezone
+from django.core.validators import MaxValueValidator, MinValueValidator, RegexValidator
 from django.contrib.auth.models import User
 # Create your models here.
 
 
 class Event(models.Model):
+    EVENT_TYPES = [
+        ('Party', 'Party'),
+        ('Game', 'Game'),
+        ('Club', 'Club'),
+        ('House Party', 'House Party'),
+        ('Bar', 'Bar'),
+    ]
+    zipcode_validator = RegexValidator(
+        regex=r'^\d{5}(?:-\d{4})?$',
+        message="Enter a valid zipcode."
+    )
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
-    type = models.CharField(max_length=100)
+    type = models.CharField(max_length=100, choices=EVENT_TYPES, default='Party')
     description = models.TextField(max_length=250)
     event_date_time = models.DateTimeField(default=timezone.now)
     location = models.CharField(max_length=100)
-    capacity = models.CharField(max_length=100)
-    restrictions = models.CharField(max_length=100)
-    notes = models.TextField(max_length=500)
+    capacity = models.PositiveIntegerField()
+    restrictions = models.CharField(max_length=100, blank=True, null=True)
+    notes = models.TextField(max_length=500, blank=True, null=True)
     photo_url = models.CharField(max_length=200, blank=True, null=True)
+    zipcode = models.CharField(max_length=10, validators=[zipcode_validator])
+
 
     def __str__(self):
         return f'{self.name} ({ self.id })'
-    
+
     def get_absolute_url(self):
         return reverse('detail', kwargs={'event_id': self.id})
+
+
     
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
