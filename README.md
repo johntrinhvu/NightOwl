@@ -44,7 +44,6 @@ https://nightowl-410.herokuapp.com/
 
 ## Ice Box Features
 Some of the enhancements we would like to add to NightOwl are as follows:
-* Add search functionality where users can look up different events
 * Permit users to monetize events that they host
 * Give users the option to bookmark events
 * Implement a Calendar API where users can mark upcoming events
