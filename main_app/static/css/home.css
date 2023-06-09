@@ -310,7 +310,6 @@
 
 .card-container {
   position: relative;
-  overflow: hidden; /* This is to hide any overflow of the video */
 }
 
 .video-bg {
