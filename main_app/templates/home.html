@@ -185,49 +185,46 @@ function filterEventsByZipcode(zipcode) {
         "photo_url": "{{ event.photo_url }}",
         "update": "{% url 'events_update' event.id %}",
         "delete": "{% url 'events_delete' event.id %}",
-        "photo": "{% url 'add_photo' event.id %}"
-      }{% if not forloop.last %},{% endif %}
+        "photo": "{% url 'add_photo' event.id %}",
+      },
       {% endfor %} 
       ];
 
-      let post = events[id-1];
-      var cardActionContent = '';
-      if (currentUser == post.user || currentUser == 'admin') {
-          cardActionContent = `<a href="${post.update}">Edit</a>
-                              <a href="${post.delete}">Delete</a>`;
-      }
-
-      myModal.innerHTML = `
-  <div class="modal-content">
-    <span class="close">&times;</span>
-    <h1>Event Details</h1>
-    <div>
-      <span class="card-title">${post.name}</span>
-      <p>Host: ${post.user}</p>
-      <p>Event Type: ${post.type}</p>
-      <p>Description: ${post.description}</p>
-      <p>Location: ${post.location}</p>
-      <p>Zip Code: ${post.zipcode}</p>
-      <p>Date: ${post.date_time}</p>
-      <p>Capacity: ${post.capacity}</p>
-      <P>Restrictions: ${post.restrictions}</P>
-      <p>HostNotes: ${post.notes}</p>
-    </div>
-    <div class="card-action">
-      ${cardActionContent}
-    </div>
-    <!-- Photo on card -->
-    <img class="responsive-img card-panel" src="${post.photo_url}">
-    <form action="${post.photo}" enctype="multipart/form-data" method="POST" class="card-panel">
-      {% csrf_token %}
-      <input type="file" name="photo-file">
-      <!-- If you need to style the above, you'll need client-side JS -->
-      <br><br>
-      <button type="submit" class="btn">More Details</button>
-    </form>
-  </div>
-`;
-
+      let post = events[id-1]
+      myModal.innerHTML=`
+              <div class="modal-content">
+                <span class="close">&times;</span>
+                <h1>Event Details</h1>
+                  <div class="card">
+                    <div class="modal-content">
+                      <span class="card-title">${post.name}</span>
+                      <p>User: ${post.user}</p>
+                      <p>Type: ${post.type}</p>
+                      <p>Description: ${post.description}</p>
+                      <p>Location: ${post.location}</p>
+                      <p>Date: ${post.date_time}</p>
+                      <p>Capacity: ${post.capacity}</p>
+                      <P>Restrictions: ${post.restrictions}</P>
+                      <p>Notes: ${post.notes}</p>
+                      <div class="card-action">
+                        <a href="${post.update}">Edit</a>
+                        <a href="${post.delete}">Delete</a>
+                      </div>
+                    </div>
+                    <!--    Photo on card     -->
+                    <div class="photo-wrapper">
+                      <form action="${post.photo}" enctype="multipart/form-data" method="POST" class="card-panel">
+                        <img class="responsive-img card-panel" src="${post.photo_url}">
+                        {% csrf_token %}
+                        <input type="file" name="photo-file">
+                        <!-- if you need to style the above you'll need client side JS -->
+                        <br><br>
+                        <button type="submit" class="btn">Submit</button>
+                      </form>
+                    </div>
+                  </div>
+              </div>
+      `
     }
 
     // When the user clicks on <span> (x), close the modal
