@@ -34,7 +34,7 @@
     <video id="video-background" data-videos='{% static "detailsvideo/video1.mp4" %}, {% static "detailsvideo/video2.mp4" %}, {% static "loginvideo/video2.mp4" %}' autoplay loop muted></video>
   </div>
   <div class="card">
-    <h1 class="card-title uppercase">{{ event.name }}</h1> <!-- Put the title inside the card div -->
+    <h1 class="card-title uppercase">{{ event.name }}</h1>
     <div class="card-content">
       <p>Host: {{ event.user }} </p>
       <p>Type: {{ event.type }}</p>
@@ -64,7 +64,7 @@
             function loadNextVideo() {
                 videoElement.src = videos[videoIndex].trim();
                 videoElement.load();
-                videoElement.playbackRate = 0.8; // Play video at half speed
+                videoElement.playbackRate = 0.8; 
                 videoElement.play();
                 videoIndex = (videoIndex + 1) % videos.length;
 
@@ -86,7 +86,7 @@ function confirmDelete(eventId) {
         xhr.open('POST', "/event/" + eventId + "/delete/", true);
         xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
         xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-        xhr.setRequestHeader('X-CSRFToken', getCookie('csrftoken')); // Include the CSRF token
+        xhr.setRequestHeader('X-CSRFToken', getCookie('csrftoken'));
         xhr.onload = function () {
             if (xhr.status === 200) {
                 var response = JSON.parse(xhr.responseText);
