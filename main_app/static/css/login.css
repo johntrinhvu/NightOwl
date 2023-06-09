@@ -20,7 +20,7 @@ body {
   flex-direction: column;
   align-items: center;
   box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
-  box-sizing: border-box; /* Added */
+  box-sizing: border-box;
 }
 
 input[type="text"],
@@ -43,7 +43,7 @@ input[type="password"]:focus,
 input[type="email"]:focus {
   border: 2px solid white;
   border-radius: 20px;
-  outline: none; /* Remove default outline */
+  outline: none;
 
 }
 
@@ -74,7 +74,7 @@ button:hover {
   height: 100%;
   z-index: -1;
   object-fit: cover;
-  filter: blur(30px); /* Added blur */
+  filter: blur(30px);
 
 }
 #video-overlay {
@@ -83,7 +83,7 @@ button:hover {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5); /* Adjust the opacity and color here */
+  background-color: rgba(0, 0, 0, 0.5);
   z-index: -1;
 }
 a {

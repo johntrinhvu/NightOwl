@@ -18,14 +18,14 @@ body {
   padding: 20px;
   height: 80%;
   border-radius: 10px;
-  width: 55%; /* Add this line to make the form wider */
+  width: 55%;
   display: flex;
   flex-direction: column;
   align-items: center;
   box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
   box-sizing: border-box;
   font-size: 1.1rem;
-  font-weight: 300; /* Decreased from 500 to make text thinner */
+  font-weight: 300;
 }
 
 .card-title {
@@ -47,7 +47,7 @@ body {
   padding: 5px 10px;
   margin: 5px;
   transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
-  border-radius: 10px; /* this line makes the corners of the buttons rounded */
+  border-radius: 10px;
 }
 
 
@@ -84,48 +84,48 @@ body {
   z-index: -1;
 }
 .card {
-  /* ...other styles... */
+ 
   display: flex;
-  flex-direction: column; /* Change flex direction to row */
+  flex-direction: column;
   align-items: center;
-  justify-content: space-around; /* Add space around items */
+  justify-content: space-around;
 }
 
 .card-title {
-  /* ...other styles... */
-  flex: 1; /* Take up 100% of the available width */
+ 
+  flex: 1;
 }
 
 .card-content {
-  /* ...other styles... */
-  flex: 4; /* Take up 80% of the available width */
+ 
+  flex: 4;
 }
 .card-content {
-  /* ...other styles... */
-  flex: 4; /* Take up 80% of the available width */
-  margin: 0 ; /* Add vertical space around the content */
+ 
+  flex: 4;
+  margin: 0 ;
   display: flex;
   flex-direction: column;
   justify-content: space-around;
 }
 
 .card-content {
-  /* ...other styles... */
-  flex: 4; /* Take up 80% of the available width */
-  margin: 0; /* Remove vertical space around the content */
+ 
+  flex: 4;
+  margin: 0;
   display: flex;
   flex-direction: column;
 }
 .card-title {
-  /* ...other styles... */
-  margin-bottom: -50px; /* Adjust to your liking */
+ 
+  margin-bottom: -50px;
 }
 .card-action {
-  margin-top: 20px; /* Add a top margin */
+  margin-top: 20px;
 }
 
 .card-action a {
-  /* ...other styles... */
+ 
   background-color: transparent;
   border: 2px solid #fff;
   color: #fff;
@@ -133,7 +133,7 @@ body {
   padding: 5px 10px;
   margin: 5px;
   transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
-  border-radius: 10px; /* this line makes the corners of the buttons rounded */
+  border-radius: 10px;
 }
 
 .card-action a:hover {

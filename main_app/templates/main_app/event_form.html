@@ -204,7 +204,7 @@
     function loadNextVideo() {
       videoElement.src = videos[videoIndex].trim();
         videoElement.load();
-        videoElement.playbackRate = 0.8; // Play video at half speed
+        videoElement.playbackRate = 0.8;
         videoElement.play();
         videoIndex = (videoIndex + 1) % videos.length;
 
