@@ -132,7 +132,7 @@
             <td><label for="{{ form.name.id_for_label }}">Event Name:</label></td>
             <td>{{ form.name }}</td>
           </tr>
-          <tr class="form-group">
+          <tr class="form-group" class="black-background">
             <td><label for="{{ form.type.id_for_label }}">Type:</label></td>
             <td>{{ form.type }}</td>
           </tr>
@@ -144,7 +144,7 @@
             <td><label for="{{ form.location.id_for_label }}">Location:</label></td>
             <td>{{ form.location }}</td>
           </tr>
-          <tr class="form-group">
+          <tr class="form-group" class="black-background">
             <td><label for="{{ form.capacity.id_for_label }}">Capacity:</label></td>
             <td>{{ form.capacity }}</td>
           </tr>
@@ -154,11 +154,11 @@
           </tr>
           
           
-          <tr class="form-group">
+          <tr class="form-group" >
             <td><label for="{{ form.restrictions.id_for_label }}">Restrictions:</label></td>
             <td>{{ form.restrictions }}</td>
           </tr>
-          <tr>
+          <tr class="black-background">
             <td><label for="{{ form.event_date_time.id_for_label }}">Event Date:</label></td>
             <td>{{ form.event_date_time }}</td>
           </tr>
@@ -168,8 +168,11 @@
           </tr>
         </table>
       </div>
-      <a href="{% url 'home' %}">Back to Home</a>
+      <div class="buttons1">
+      <a href="{% url 'home' %}"class="button">Back to Home</a>
       <button type="submit">Submit</button>
+    </div>
+      
     </form>
   </div>
 
