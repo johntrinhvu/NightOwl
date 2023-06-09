@@ -105,7 +105,7 @@
     display: flex;
     flex-wrap: wrap;
     justify-content: space-evenly;
-    background-color: var(--dark-grey-2);
+    background-color: transparent;
     padding: 20px;
     height: 100vh;
     width: 100vw;
@@ -290,12 +290,37 @@
   width: 40%;
 }
 
-
-.photo-wrapper {
-  width: 50%;
-  margin: 20px;
+.header-left:hover h1 {
+  animation: glow 1s infinite;
+  cursor: pointer;
 }
 
-.responsive-img {
-  width: 300px;
+@keyframes glow {
+  0% {
+    text-shadow: none;
+  }
+  50% {
+    text-shadow: 0 0 30px rgba(0, 0, 255, 1), 0 0 60px rgba(0, 0, 255, 1);
+  }
+  100% {
+    text-shadow: none;
+  }
+}
+
+
+.card-container {
+  position: relative;
+  overflow: hidden; /* This is to hide any overflow of the video */
+}
+
+.video-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* This is to cover the entire area of card-container */
+  z-index: -1; /* This is to place the video behind the content */
+  filter: blur(30px); /* Add this line */
+
 }
