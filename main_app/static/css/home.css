@@ -123,6 +123,7 @@
     box-sizing: border-box;
     margin-bottom: 20px;
     transition: transform 0.3s;
+    height: 400px;
 
   }
   .card:hover {
