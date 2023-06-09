@@ -1,4 +1,4 @@
-  {% load static %}
+{% load static %}
 
 <!DOCTYPE html>
 <html>
@@ -100,25 +100,22 @@
   </nav>
 
   <main>
-    
-    
-
     <div class="card-container">
       <div id="myModal" class="modal">
-          <span class="close">&times;</span>
-          <h1>Event Details</h1>
-            <div id="modal-content"></div>  
-            <div class="card-action"></div>
+        <span class="close">&times;</span>
+        <h1>Event Details</h1>
+        <div id="modal-content"></div>  
+        <div class="card-action"></div>
       </div>
       
-      <!--   Display content on card     -->
+      <!-- Display content on card -->
       {% for event in events %}
         <div class="card" id="{{ forloop.counter }}" onClick="handleClick(event)">
           <div class="card-header">
             <i class="far fa-heart" style="font-size: 150%;"></i> <!-- Empty heart icon -->
           </div>
           <div class="card-body">
-            <h1> {{ event.name }}</h1>
+            <h1>{{ event.name }}</h1>
             <h2>Location: {{ event.location }}</h2>
             <h2>Zip Code: {{ event.zipcode }}</h2>
             <h3>Date: {{ event.event_date_time|date:"F d, Y" }}</h3>
@@ -138,86 +135,44 @@
     // Get the <span> element that closes the modal
     var span = document.getElementsByClassName("close")[0];
     var currentUser = "{{ user.username }}";
-    document.getElementById("zipcode").addEventListener("keyup", function(event) {
-  if (event.key === "Enter") {
-    filterEventsByZipcode(this.value);
-  }
-});
-
-function filterEventsByZipcode(zipcode) {
-  var cards = document.getElementsByClassName("card");
-
-  for (var i = 0; i < cards.length; i++) {
-    var card = cards[i];
-    var eventZipcode = card.querySelector(".card-body .zipcode").innerText;
-
-    if (eventZipcode.includes(zipcode)) {
-      card.style.display = "block";
-    } else {
-      card.style.display = "none";
-    }
-  }
-}
-
-
-
-
-
-
-
-
-    // When the user clicks on the button, open the modal
+    
     function handleClick(e) {
       const id = e.currentTarget.id;
       modal.style.display = "block";
       var events = [
-      {% for event in events %} {
-        "name": "{{ event.name }}",
-        "user": "{{ event.user.username }}",  // Assuming event.user is a User object, if not adjust accordingly.
-        "type": "{{ event.type }}",
-        "description": "{{ event.description }}",
-        "location": "{{ event.location }}",
-        "zipcode": "{{ event.zipcode }}",
-        "date_time": "{{ event.event_date_time }}",
-        "capacity": "{{ event.capacity }}",
-        "restrictions": "{{ event.restrictions }}",
-        "notes": "{{ event.notes }}",
-        "photo_url": "{{ event.photo_url }}",
-        "update": "{% url 'events_update' event.id %}",
-        "delete": "{% url 'events_delete' event.id %}",
-        "photo": "{% url 'add_photo' event.id %}"
-      }{% if not forloop.last %},{% endif %}
-      {% endfor %} 
+        {% for event in events %} {
+          "name": "{{ event.name }}",
+          "user": "{{ event.user.username }}",
+          "type": "{{ event.type }}",
+          "description": "{{ event.description }}",
+          "location": "{{ event.location }}",
+          "zipcode": "{{ event.zipcode }}",
+          "date_time": "{{ event.event_date_time }}",
+          "capacity": "{{ event.capacity }}",
+          "restrictions": "{{ event.restrictions }}",
+          "notes": "{{ event.notes }}",
+          "photo_url": "{{ event.photo_url }}",
+          "update": "{% url 'events_update' event.id %}",
+          "delete": "{% url 'events_delete' event.id %}",
+          "photo": "{% url 'add_photo' event.id %}"
+        }{% if not forloop.last %},{% endif %}
+        {% endfor %}
       ];
 
-      let post = events[id-1];
+      let post = events[id - 1];
       var cardActionContent = '';
-      if (currentUser == post.user || currentUser == 'admin') {
-          cardActionContent = `<a href="${post.update}">Edit</a>
-                              <a href="${post.delete}">Delete</a>`;
-      }
-
-      myModal.innerHTML = `
-  <div class="modal-content">
-    <span class="close">&times;</span>
-    <h1>Event Details</h1>
-    <div>
-      <span class="card-title">${post.name}</span>
-      <p>Host: ${post.user}</p>
-      <p>Event Type: ${post.type}</p>
-      <p>Description: ${post.description}</p>
-      <p>Location: ${post.location}</p>
-      <p>Zip Code: ${post.zipcode}</p>
-      <p>Date: ${post.date_time}</p>
-      <p>Capacity: ${post.capacity}</p>
-      <P>Restrictions: ${post.restrictions}</P>
-      <p>HostNotes: ${post.notes}</p>
-    </div>
-    <div class="card-action">
-      ${cardActionContent}
-    </div>
-    <!-- Photo on card -->
-    <img class="responsive-img card-panel" src="${post.photo_url}">
+if (currentUser == post.user) {
+  cardActionContent = `
+  <form action="${post.photo}" enctype="multipart/form-data" method="POST" class="card-panel">
+      {% csrf_token %}
+      <input type="file" name="photo-file">
+      <!-- If you need to style the above, you'll need client-side JS -->
+      <br><br>
+      <button type="submit" class="btn">Edit Details</button>
+    </form>
+  `;
+} else {
+  cardActionContent = `
     <form action="${post.photo}" enctype="multipart/form-data" method="POST" class="card-panel">
       {% csrf_token %}
       <input type="file" name="photo-file">
@@ -225,9 +180,33 @@ function filterEventsByZipcode(zipcode) {
       <br><br>
       <button type="submit" class="btn">More Details</button>
     </form>
-  </div>
-`;
+  `;
+}
 
+
+      myModal.innerHTML = `
+        <div class="modal-content">
+          <span class="close">&times;</span>
+          <h1>Event Details</h1>
+          <div>
+            <span class="card-title">${post.name}</span>
+            <p>Host: ${post.user}</p>
+            <p>Event Type: ${post.type}</p>
+            <p>Description: ${post.description}</p>
+            <p>Location: ${post.location}</p>
+            <p>Zip Code: ${post.zipcode}</p>
+            <p>Date: ${post.date_time}</p>
+            <p>Capacity: ${post.capacity}</p>
+            <p>Restrictions: ${post.restrictions}</p>
+            <p>HostNotes: ${post.notes}</p>
+          </div>
+          <div class="card-action">
+            ${cardActionContent}
+          </div>
+          <!-- Photo on card -->
+          <img class="responsive-img card-panel" src="${post.photo_url}">
+        </div>
+      `;
     }
 
     // When the user clicks on <span> (x), close the modal
@@ -240,34 +219,48 @@ function filterEventsByZipcode(zipcode) {
         modal.style.display = "none";
       }
     }
+    
     document.getElementById("search").addEventListener("keyup", function(event) {
-  if (event.key === "Enter") {
-    filterEventsByKeyword(this.value);
-  }
-});
+      if (event.key === "Enter") {
+        filterEventsByKeyword(this.value);
+      }
+    });
 
-function filterEventsByKeyword(keyword) {
-  var cards = document.getElementsByClassName("card");
+    function filterEventsByKeyword(keyword) {
+      var cards = document.getElementsByClassName("card");
 
-  for (var i = 0; i < cards.length; i++) {
-    var card = cards[i];
-    var eventDetails = card.querySelector(".card-body").innerText;
+      for (var i = 0; i < cards.length; i++) {
+        var card = cards[i];
+        var eventDetails = card.querySelector(".card-body").innerText;
 
-    if (eventDetails.toLowerCase().includes(keyword.toLowerCase())) {
-      card.style.display = "block";
-    } else {
-      card.style.display = "none";
+        if (eventDetails.toLowerCase().includes(keyword.toLowerCase())) {
+          card.style.display = "block";
+        } else {
+          card.style.display = "none";
+        }
+      }
     }
-  }
-}
-document.getElementById("zipcode").addEventListener("keyup", function(event) {
-  if (event.key === "Enter") {
-    filterEventsByZipcode(this.value);
-  }
-});
 
+    document.getElementById("zipcode").addEventListener("keyup", function(event) {
+      if (event.key === "Enter") {
+        filterEventsByZipcode(this.value);
+      }
+    });
 
-</script>
+    function filterEventsByZipcode(zipcode) {
+      var cards = document.getElementsByClassName("card");
 
+      for (var i = 0; i < cards.length; i++) {
+        var card = cards[i];
+        var eventZipcode = card.querySelector(".card-body .zipcode").innerText;
+
+        if (eventZipcode.includes(zipcode)) {
+          card.style.display = "block";
+        } else {
+          card.style.display = "none";
+        }
+      }
+    }
+  </script>
 </body>
 </html>
