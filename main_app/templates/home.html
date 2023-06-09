@@ -15,7 +15,12 @@
     crossorigin="anonymous"
   ></script>
   <link rel="stylesheet" type="text/css" href="{% static 'css/home.css' %}" />
-  <!-- Add your CSS link here -->
+  <style>
+    input[type="file"] {
+        display: none;
+    }
+</style>
+
 </head>
 <body>
   <header>
@@ -101,6 +106,7 @@
 
   <main>
     <div class="card-container">
+      <video id="video-background" class="video-bg" data-videos=' {% static "homepagevideo/video5.mp4" %}, {% static "homepagevideo/video4.mp4" %}, {% static "homepagevideo/video3.mp4" %}' autoplay loop muted></video>
       <div id="myModal" class="modal">
         <span class="close">&times;</span>
         <h1>Event Details</h1>
@@ -130,6 +136,30 @@
   
   <!-- Modal content -->
   <script>
+    window.addEventListener('DOMContentLoaded', function () {
+  var videoElement = document.getElementById('video-background');
+  var videoIndex = 0;
+  var videos = videoElement.dataset.videos.split(', ');
+
+  function loadNextVideo() {
+    videoElement.src = videos[videoIndex].trim();
+    videoElement.load();
+    videoElement.playbackRate = 0.7;
+    videoElement.play();
+    videoIndex = (videoIndex + 1) % videos.length;
+
+    setTimeout(loadNextVideo, 10000);
+  }
+
+  videoElement.addEventListener('timeupdate', function() {
+    if (this.currentTime >= this.duration - 0.5) {
+      loadNextVideo();
+    }
+  });
+
+  loadNextVideo();
+});
+
     // Get the modal
     var modal = document.getElementById("myModal");
     // Get the <span> element that closes the modal
@@ -161,11 +191,12 @@
 
       let post = events[id - 1];
       var cardActionContent = '';
+      var cardActionContent = '';
 if (currentUser == post.user) {
   cardActionContent = `
   <form action="${post.photo}" enctype="multipart/form-data" method="POST" class="card-panel">
       {% csrf_token %}
-      <input type="file" name="photo-file">
+      <input type="file" name="photo-file" style="display: none;">
       <!-- If you need to style the above, you'll need client-side JS -->
       <br><br>
       <button type="submit" class="btn">Edit Details</button>
@@ -175,13 +206,14 @@ if (currentUser == post.user) {
   cardActionContent = `
     <form action="${post.photo}" enctype="multipart/form-data" method="POST" class="card-panel">
       {% csrf_token %}
-      <input type="file" name="photo-file">
+      <input type="file" name="photo-file" style="display: none;">
       <!-- If you need to style the above, you'll need client-side JS -->
       <br><br>
       <button type="submit" class="btn">More Details</button>
     </form>
   `;
 }
+
 
 
       myModal.innerHTML = `
@@ -204,7 +236,7 @@ if (currentUser == post.user) {
             ${cardActionContent}
           </div>
           <!-- Photo on card -->
-          <img class="responsive-img card-panel" src="${post.photo_url}">
+          ${post.photo_url ? `<img class="responsive-img card-panel" src="${post.photo_url}" style="display: none;">` : ``}
         </div>
       `;
     }
