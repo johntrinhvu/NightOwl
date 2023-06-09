@@ -47,10 +47,13 @@
       <p>Notes: {{ event.notes }}</p>
     </div>
     <div class="card-action">
-      <a href="{% url 'events_update' event.id %}">Edit</a>
-      <a href="#" onclick="confirmDelete({{ event.id }})">Delete</a>
+      {% if user == event.user %}
+        <a href="{% url 'events_update' event.id %}">Edit</a>
+        <a href="#" onclick="confirmDelete({{ event.id }})">Delete</a>
+      {% endif %}
       <a href="{% url 'home' %}">Back to Home</a>
     </div>
+    
     
 <script>
    window.addEventListener('DOMContentLoaded', function () {
