@@ -146,7 +146,7 @@
         "photo_url": "{{ event.photo_url }}",
         "update": "{% url 'events_update' event.id %}",
         "delete": "{% url 'events_delete' event.id %}",
-        "photo": "{% url 'add_photo' event.id %}"
+        "photo": "{% url 'add_photo' event.id %}",
       },
       {% endfor %} 
       ];
@@ -167,21 +167,23 @@
                       <p>Capacity: ${post.capacity}</p>
                       <P>Restrictions: ${post.restrictions}</P>
                       <p>Notes: ${post.notes}</p>
+                      <div class="card-action">
+                        <a href="${post.update}">Edit</a>
+                        <a href="${post.delete}">Delete</a>
+                      </div>
                     </div>
-                    <div class="card-action">
-                      <a href="${post.update}">Edit</a>
-                      <a href="${post.delete}">Delete</a>
+                    <!--    Photo on card     -->
+                    <div class="photo-wrapper">
+                      <form action="${post.photo}" enctype="multipart/form-data" method="POST" class="card-panel">
+                        <img class="responsive-img card-panel" src="${post.photo_url}">
+                        {% csrf_token %}
+                        <input type="file" name="photo-file">
+                        <!-- if you need to style the above you'll need client side JS -->
+                        <br><br>
+                        <button type="submit" class="btn">Submit</button>
+                      </form>
                     </div>
                   </div>
-                <!--    Photo on card     -->
-                <img class="responsive-img card-panel" src="${post.photo_url}">
-                <form action="${post.photo}" enctype="multipart/form-data" method="POST" class="card-panel">
-                  {% csrf_token %}
-                  <input type="file" name="photo-file">
-                  <!-- if you need to style the above you'll need client side JS -->
-                  <br><br>
-                  <button type="submit" class="btn">Details</button>
-                </form>
               </div>
       `
     }

@@ -124,7 +124,7 @@
     box-sizing: border-box;
     margin-bottom: 20px;
     transition: transform 0.3s;
-
+    display: flex;
   }
   .card:hover {
     transform: scale(1.05);
@@ -263,4 +263,13 @@
   color: white;
   text-decoration: none;
   cursor: pointer;
+}
+
+.photo-wrapper {
+  width: 50%;
+  margin: 20px;
+}
+
+.responsive-img {
+  width: 300px;
 }
