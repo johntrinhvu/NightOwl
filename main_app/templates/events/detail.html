@@ -36,9 +36,11 @@
   <div class="card">
     <h1 class="card-title uppercase">{{ event.name }}</h1> <!-- Put the title inside the card div -->
     <div class="card-content">
+      <p>Host: {{ event.user }} </p>
       <p>Type: {{ event.type }}</p>
       <p>Description: {{ event.description }}</p>
       <p>Location: {{ event.location }}</p>
+      <p>Zipcode: {{ event.zipcode }}</p>  
       <p>Time: {{ event.event_date_time|date:"F d, Y H:i A" }}</p>
       <p>Capacity: {{ event.capacity }}</p>
       <p>Restrictions: {{ event.restrictions }}</p>
@@ -46,8 +48,10 @@
     </div>
     <div class="card-action">
       <a href="{% url 'events_update' event.id %}">Edit</a>
-      <a href="{% url 'events_delete' event.id %}">Delete</a>
-  </div>
+      <a href="#" onclick="confirmDelete({{ event.id }})">Delete</a>
+      <a href="{% url 'home' %}">Back to Home</a>
+    </div>
+    
 <script>
    window.addEventListener('DOMContentLoaded', function () {
     var videoElement = document.getElementById('video-background');
@@ -73,6 +77,41 @@
 
     loadNextVideo();
 });
+
+function confirmDelete(eventId) {
+    if (confirm("Are you sure you want to delete this event?")) {
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', "/event/" + eventId + "/delete/", true);
+        xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+        xhr.setRequestHeader('X-CSRFToken', getCookie('csrftoken')); // Include the CSRF token
+        xhr.onload = function () {
+            if (xhr.status === 200) {
+                var response = JSON.parse(xhr.responseText);
+                if (response.redirect) {
+                    window.location.href = response.redirect;
+                }
+            }
+        };
+        xhr.send();
+    }
+}
+
+function getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
 
 </script>
 </body>
